@@ -6,8 +6,7 @@
     <title>Contact - Fady Eskandr</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <!-- EmailJS (no backend required) -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Removed EmailJS script (not needed with FormSubmit) -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -136,8 +135,11 @@
                     <div id="toast-error" class="toast bg-red-500 text-white">Something went wrong. Please try again.</div>
 
                     <form id="contact-form" class="space-y-6" novalidate>
-                        <!-- Honeypot -->
-                        <input type="text" id="website" name="website" class="hidden" tabindex="-1" autocomplete="off"/>
+                        <!-- Honeypot (FormSubmit recognizes _honey) -->
+                        <input type="text" id="website" name="_honey" class="hidden" tabindex="-1" autocomplete="off"/>
+
+                        <!-- Disable FormSubmit Captcha -->
+                        <input type="hidden" name="_captcha" value="false" />
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="form-group">
@@ -321,12 +323,9 @@
     </footer>
 
     <script>
-        // ===== EmailJS init (SDK) =====
-        (function(){
-            emailjs.init({ publicKey: "It4YpymDkPgqGdtjT" });
-            console.log("EmailJS SDK version:", emailjs.VERSION || "unknown");
-            console.log("Origin:", window.location.origin);
-        })();
+        // ===== FormSubmit (AJAX) config =====
+        const FORMSUBMIT_EMAIL = "fadyeskandr100@gmail.com"; // change if needed
+        const FORMSUBMIT_URL = "https://formsubmit.co/ajax/" + encodeURIComponent(FORMSUBMIT_EMAIL);
 
         // Global error logging to help diagnose issues
         window.addEventListener("error", e => console.error("JS Error:", e.message));
@@ -348,7 +347,7 @@
                 setTimeout(()=> {
                     el.classList.remove('show');
                     if(el === toastError) el.textContent = "Something went wrong. Please try again.";
-                }, 5000);
+                }, 6000);
             }
             function setLoading(isLoading){
                 submitBtn.disabled = isLoading;
@@ -362,89 +361,78 @@
                        data.inquiryType && data.message && data.message.trim().length > 10;
             }
 
-            async function sendWithSDK(payload){
-                // Preferred: SDK
-                console.log("[EmailJS SDK] Sending with service_pn1pbx9 / template_rwqrdqr", { keys: Object.keys(payload) });
-                const res = await emailjs.send("service_pn1pbx9", "template_rwqrdqr", payload);
-                console.log("[EmailJS SDK] Success:", res);
-                return res;
+            function buildPayload(){
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const company = (document.getElementById('company').value.trim() || "—");
+                const inquiryType = document.getElementById('inquiryType').value;
+                const message = document.getElementById('message').value.trim();
+                const fullName = `${firstName} ${lastName}`.trim();
+
+                // FormSubmit expects name, email, message at minimum.
+                // We also send helpful extras and special fields.
+                return {
+                    name: fullName,
+                    email: email,
+                    message: message,
+                    company: company,
+                    inquiryType: inquiryType,
+                    site_origin: window.location.origin,
+
+                    // Special FormSubmit fields:
+                    _subject: `New ${inquiryType || 'inquiry'} from ${fullName}`,
+                    _template: "table",
+                    _captcha: "false"
+                    // You could also add: _autoresponse: "Thanks for reaching out..." (plain text)
+                };
             }
 
-            async function sendWithREST(payload){
-                // Fallback: direct REST call (still client-side and free)
-                const body = {
-                    service_id: "service_pn1pbx9",
-                    template_id: "template_rwqrdqr",
-                    user_id: "It4YpymDkPgqGdtjT", // public key (a.k.a. user_id in REST)
-                    template_params: payload
-                };
-                console.log("[EmailJS REST] POST /email/send", body);
-                const r = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            async function sendWithFormSubmit(payload){
+                const r = await fetch(FORMSUBMIT_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body)
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify(payload)
                 });
-                const text = await r.text();
-                // REST returns 200 "OK" text on success
-                if (!r.ok) {
-                    throw new Error(`[REST ${r.status}] ${text}`);
+                const data = await r.json().catch(()=> ({}));
+                if (!r.ok || data.success === "false") {
+                    const msg = data?.message || `HTTP ${r.status}`;
+                    throw new Error(msg);
                 }
-                console.log("[EmailJS REST] Success:", text);
-                return text;
+                return data;
             }
 
             form.addEventListener('submit', async function(e){
                 e.preventDefault();
 
-                // Spam honeypot
+                // Spam honeypot (_honey is handled by FormSubmit server-side too)
                 if (document.getElementById('website').value) return;
 
-                const data = {
-                    firstName: document.getElementById('firstName').value.trim(),
-                    lastName: document.getElementById('lastName').value.trim(),
-                    email: document.getElementById('email').value.trim(),
-                    company: document.getElementById('company').value.trim(),
+                const payload = buildPayload();
+                if (!validate({
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: payload.email,
                     inquiryType: document.getElementById('inquiryType').value,
-                    message: document.getElementById('message').value.trim(),
-                };
-                data.fullName = `${data.firstName} ${data.lastName}`;
-
-                if (!validate(data)){
-                    showToast(toastError, "Please check required fields.");
+                    message: payload.message
+                })){
+                    showToast(toastError, "Please check required fields (message must be > 10 chars).");
                     return;
                 }
 
-                // Payload with common EmailJS aliases
-                const payload = {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    fullName: data.fullName,
-                    email: data.email,
-                    company: data.company || "—",
-                    inquiryType: data.inquiryType,
-                    message: data.message,
-                    from_name: data.fullName,
-                    from_email: data.email,
-                    reply_to: data.email,
-                    company_name: data.company || "—",
-                    inquiry_type: data.inquiryType
-                };
-
                 setLoading(true);
                 try{
-                    try {
-                        await sendWithSDK(payload);
-                    } catch (sdkErr){
-                        console.warn("[EmailJS SDK] Failed, trying REST…", sdkErr);
-                        await sendWithREST(payload);
-                    }
-
+                    const res = await sendWithFormSubmit(payload);
+                    console.log("[FormSubmit] success:", res);
                     form.reset();
                     showToast(toastSuccess);
                 }catch(err){
-                    console.error("Email sending failed:", err);
-                    const msg = (err && (err.text || err.message)) ? String(err.text || err.message) : "Check Console → Network for details.";
-                    showToast(toastError, msg);
+                    console.error("[FormSubmit] failed:", err);
+                    let hint = String(err?.message || "Unknown error");
+                    if (/verify/i.test(hint)) {
+                        hint = "First-time setup: check your email for a FormSubmit verification link, then submit again.";
+                    }
+                    showToast(toastError, hint);
                 }finally{
                     setLoading(false);
                 }
