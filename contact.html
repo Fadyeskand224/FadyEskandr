@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contact - Fady Eskandr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <!-- EmailJS (no backend required) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1a1d29;
+            --cream: #f8f6f0;
+            --copper: #c17a5b;
+            --teal: #4a9b8e;
+        }
+
+        /* Utility helpers to match classes used across pages */
+        .bg-copper{ background-color: var(--copper) !important; }
+        .text-copper{ color: var(--copper) !important; }
+        .border-copper{ border-color: var(--copper) !important; }
+        .bg-navy{ background-color: var(--navy) !important; }
+        .text-navy{ color: var(--navy) !important; }
+        .bg-teal{ background-color: var(--teal) !important; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--navy);
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+
+        .text-gradient{
+            background: linear-gradient(135deg, var(--copper), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-blur{
+            backdrop-filter: blur(10px);
+            background: rgba(248, 246, 240, 0.9);
+        }
+
+        .form-group{ position: relative; margin-bottom: 2rem; }
+        .form-input{
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: white;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .form-input:focus{
+            outline: none;
+            border-color: var(--copper);
+            box-shadow: 0 0 0 3px rgba(193,122,91,0.1);
+        }
+        .form-label{
+            position: absolute; left: 1rem; top: 1rem; color: #6b7280;
+            transition: all 0.3s ease; pointer-events: none; background: white; padding: 0 0.5rem;
+        }
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label{
+            top: -0.5rem; left: 0.75rem; font-size: 0.875rem; color: var(--copper);
+        }
+
+        .contact-card{
+            background: white; border-radius: 1rem; padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;
+        }
+        .contact-card:hover{ transform: translateY(-4px); box-shadow: 0 8px 25px rgba(26,29,41,0.15); }
+
+        .toast{
+            display: none;
+            padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;
+            transform: translateY(-10px);
+        }
+        .toast.show{
+            display: block; animation: toast-in 250ms ease-out forwards;
+        }
+        @keyframes toast-in{ to{ transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-blur border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="serif text-2xl font-bold text-gradient">Fady Eskandr</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-copper transition-colors">Home</a>
+                    <a href="projects.html" class="text-gray-700 hover:text-copper transition-colors">Projects</a>
+                    <a href="experience.html" class="text-gray-700 hover:text-copper transition-colors">Experience</a>
+                    <a href="contact.html" class="text-copper font-semibold">Contact</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700" aria-label="Open menu">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 bg-gradient-to-br from-navy to-gray-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="serif text-5xl lg:text-6xl font-bold mb-6 text-gradient">Get In Touch</h1>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Ready to collaborate on exciting projects? Let's connect and discuss how my skills
+                    can contribute to your team's success.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div>
+                    <h2 class="serif text-3xl font-bold mb-8 text-navy">Send Me a Message</h2>
+
+                    <div id="toast-success" class="toast bg-green-500 text-white">Thanks! Your message was sent.</div>
+                    <div id="toast-error" class="toast bg-red-500 text-white">Something went wrong. Please try again.</div>
+
+                    <form id="contact-form" class="space-y-6" novalidate>
+                        <!-- Honeypot -->
+                        <input type="text" id="website" name="website" class="hidden" tabindex="-1" autocomplete="off"/>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <input type="text" id="firstName" name="firstName" class="form-input" placeholder=" " required />
+                                <label for="firstName" class="form-label">First Name</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="lastName" name="lastName" class="form-input" placeholder=" " required />
+                                <label for="lastName" class="form-label">Last Name</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" class="form-input" placeholder=" " required />
+                            <label for="email" class="form-label">Email Address</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" id="company" name="company" class="form-input" placeholder=" " />
+                            <label for="company" class="form-label">Company (Optional)</label>
+                        </div>
+
+                        <div class="form-group">
+                            <select id="inquiryType" name="inquiryType" class="form-input" required>
+                                <option value="">Select Inquiry Type</option>
+                                <option value="job-opportunity">Job Opportunity</option>
+                                <option value="collaboration">Collaboration</option>
+                                <option value="consultation">Technical Consultation</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <label for="inquiryType" class="sr-only">Inquiry Type</label>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea id="message" name="message" rows="5" class="form-input" placeholder=" " required></textarea>
+                            <label for="message" class="form-label">Your Message</label>
+                        </div>
+
+                        <button id="submitBtn" type="submit"
+                                class="w-full bg-copper hover:bg-opacity-90 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <span id="btnText">Send Message</span>
+                            <svg id="btnSpinner" class="animate-spin h-5 w-5 ml-2 inline-block hidden" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="space-y-8">
+                    <div>
+                        <h2 class="serif text-3xl font-bold mb-8 text-navy">Let's Connect</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            I'm currently open to new opportunities and exciting projects. Whether you're looking
+                            for a skilled software engineer or want to discuss a potential collaboration, I'd love to hear from you.
+                        </p>
+                    </div>
+
+                    <!-- Contact Cards -->
+                    <div class="space-y-6">
+                        <div class="contact-card">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-copper rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-navy">Email</h3>
+                                    <p class="text-gray-600"><a href="mailto:fadyeskandr100@gmail.com" class="hover:underline">fadyeskandr100@gmail.com</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-teal rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-navy">LinkedIn</h3>
+                                    <p class="text-gray-600"><a class="hover:underline" target="_blank" href="https://linkedin.com/in/fady-eskandr">linkedin.com/in/fady-eskandr</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-navy">Location</h3>
+                                    <p class="text-gray-600">Raleigh, NC</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-navy">Availability</h3>
+                                    <p class="text-gray-600">Open to new opportunities</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="bg-gray-50 p-6 rounded-2xl">
+                        <h3 class="serif text-xl font-bold mb-4 text-navy">Quick Facts</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-copper mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Available for full-time positions
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-copper mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Open to remote work opportunities
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-copper mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Interested in AI/ML and full-stack roles
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-copper mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Passionate about innovative projects
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="serif text-2xl font-bold mb-4 text-gradient">Fady Eskandr</div>
+                <p class="text-gray-400 mb-6">Software Engineer | Full-Stack Developer | AI Enthusiast</p>
+                <div class="flex justify-center space-x-6 mb-8">
+                    <a href="https://linkedin.com/in/fady-eskandr" target="_blank" class="text-gray-400 hover:text-copper transition-colors" aria-label="LinkedIn">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:fadyeskandr100@gmail.com" class="text-gray-400 hover:text-copper transition-colors" aria-label="Email">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm">© 2025 Fady Eskandr. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== EmailJS init (SDK) =====
+        (function(){
+            emailjs.init({ publicKey: "It4YpymDkPgqGdtjT" });
+            console.log("EmailJS SDK version:", emailjs.VERSION || "unknown");
+            console.log("Origin:", window.location.origin);
+        })();
+
+        // Global error logging to help diagnose issues
+        window.addEventListener("error", e => console.error("JS Error:", e.message));
+        window.addEventListener("unhandledrejection", e => console.error("Promise Rejection:", e.reason));
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('contact-form');
+            const toastSuccess = document.getElementById('toast-success');
+            const toastError = document.getElementById('toast-error');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+
+            function showToast(el, extra){
+                if(extra && el === toastError){
+                    el.textContent = "Something went wrong. " + extra;
+                }
+                el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+                setTimeout(()=> {
+                    el.classList.remove('show');
+                    if(el === toastError) el.textContent = "Something went wrong. Please try again.";
+                }, 5000);
+            }
+            function setLoading(isLoading){
+                submitBtn.disabled = isLoading;
+                btnSpinner.classList.toggle('hidden', !isLoading);
+                btnText.textContent = isLoading ? 'Sending...' : 'Send Message';
+            }
+            function validate(data){
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return data.firstName && data.lastName &&
+                       data.email && emailRegex.test(data.email) &&
+                       data.inquiryType && data.message && data.message.trim().length > 10;
+            }
+
+            async function sendWithSDK(payload){
+                // Preferred: SDK
+                console.log("[EmailJS SDK] Sending with service_pn1pbx9 / template_rwqrdqr", { keys: Object.keys(payload) });
+                const res = await emailjs.send("service_pn1pbx9", "template_rwqrdqr", payload);
+                console.log("[EmailJS SDK] Success:", res);
+                return res;
+            }
+
+            async function sendWithREST(payload){
+                // Fallback: direct REST call (still client-side and free)
+                const body = {
+                    service_id: "service_pn1pbx9",
+                    template_id: "template_rwqrdqr",
+                    user_id: "It4YpymDkPgqGdtjT", // public key (a.k.a. user_id in REST)
+                    template_params: payload
+                };
+                console.log("[EmailJS REST] POST /email/send", body);
+                const r = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+                const text = await r.text();
+                // REST returns 200 "OK" text on success
+                if (!r.ok) {
+                    throw new Error(`[REST ${r.status}] ${text}`);
+                }
+                console.log("[EmailJS REST] Success:", text);
+                return text;
+            }
+
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+
+                // Spam honeypot
+                if (document.getElementById('website').value) return;
+
+                const data = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    company: document.getElementById('company').value.trim(),
+                    inquiryType: document.getElementById('inquiryType').value,
+                    message: document.getElementById('message').value.trim(),
+                };
+                data.fullName = `${data.firstName} ${data.lastName}`;
+
+                if (!validate(data)){
+                    showToast(toastError, "Please check required fields.");
+                    return;
+                }
+
+                // Payload with common EmailJS aliases
+                const payload = {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    fullName: data.fullName,
+                    email: data.email,
+                    company: data.company || "—",
+                    inquiryType: data.inquiryType,
+                    message: data.message,
+                    from_name: data.fullName,
+                    from_email: data.email,
+                    reply_to: data.email,
+                    company_name: data.company || "—",
+                    inquiry_type: data.inquiryType
+                };
+
+                setLoading(true);
+                try{
+                    try {
+                        await sendWithSDK(payload);
+                    } catch (sdkErr){
+                        console.warn("[EmailJS SDK] Failed, trying REST…", sdkErr);
+                        await sendWithREST(payload);
+                    }
+
+                    form.reset();
+                    showToast(toastSuccess);
+                }catch(err){
+                    console.error("Email sending failed:", err);
+                    const msg = (err && (err.text || err.message)) ? String(err.text || err.message) : "Check Console → Network for details.";
+                    showToast(toastError, msg);
+                }finally{
+                    setLoading(false);
+                }
+            });
+
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const nav = document.querySelector('nav');
+            if (mobileMenuBtn){
+                mobileMenuBtn.addEventListener('click', function () {
+                    let mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu){
+                        mobileMenu = document.createElement('div');
+                        mobileMenu.id = 'mobile-menu';
+                        mobileMenu.className = 'md:hidden bg-white border-t border-gray-200';
+                        mobileMenu.innerHTML = `
+                            <div class="px-4 py-6 space-y-4">
+                                <a href="index.html" class="block text-gray-700 hover:text-copper transition-colors">Home</a>
+                                <a href="projects.html" class="block text-gray-700 hover:text-copper transition-colors">Projects</a>
+                                <a href="experience.html" class="block text-gray-700 hover:text-copper transition-colors">Experience</a>
+                                <a href="contact.html" class="block text-copper font-semibold">Contact</a>
+                            </div>`;
+                        nav.appendChild(mobileMenu);
+                    }
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // Animate contact cards on scroll
+            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+            const observer = new IntersectionObserver(function(entries){
+                entries.forEach(entry => {
+                    if(entry.isIntersecting){
+                        anime({
+                            targets: entry.target,
+                            opacity: [0,1],
+                            translateY: [30,0],
+                            duration: 800,
+                            easing: 'easeOutCubic'
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.contact-card').forEach(card=>{
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+
+            anime({
+                targets: '#contact-form',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 1000,
+                easing: 'easeOutCubic',
+                delay: 200
+            });
+        });
+    </script>
+</body>
+</html>

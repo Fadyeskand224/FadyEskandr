@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - Fady Eskandr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a1d29;
+            --cream: #f8f6f0;
+            --copper: #c17a5b;
+            --teal: #4a9b8e;
+        }
+
+        /* ✅ Missing utilities added (used across your site) */
+        .bg-copper { background-color: var(--copper) !important; }
+        .text-copper { color: var(--copper) !important; }
+        .bg-teal { background-color: var(--teal) !important; }
+        .bg-navy { background-color: var(--navy) !important; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--navy);
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--copper), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(248, 246, 240, 0.9);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--copper);
+            border-radius: 50%;
+            border: 3px solid var(--cream);
+            box-shadow: 0 0 0 3px var(--copper);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% + 2rem);
+            background: linear-gradient(to bottom, var(--copper), transparent);
+        }
+
+        .timeline-item:last-child::after { display: none; }
+
+        .timeline-item:hover::before {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 4px var(--copper);
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-content {
+            transform: translateX(0.5rem);
+            box-shadow: 0 8px 25px rgba(26, 29, 41, 0.15);
+        }
+
+        .timeline-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .timeline-details.expanded { max-height: 500px; }
+
+        .skill-tag {
+            background: rgba(193, 122, 91, 0.1);
+            color: var(--copper);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .achievement-item::before {
+            content: '✓';
+            color: var(--teal);
+            font-weight: bold;
+            margin-right: 0.5rem;
+            margin-top: 0.125rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-blur border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="serif text-2xl font-bold text-gradient">Fady Eskandr</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-copper transition-colors">Home</a>
+                    <a href="projects.html" class="text-gray-700 hover:text-copper transition-colors">Projects</a>
+                    <a href="experience.html" class="text-copper font-semibold">Experience</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-copper transition-colors">Contact</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 bg-gradient-to-br from-navy to-gray-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="serif text-5xl text-gradient lg:text-6xl font-bold mb-6">Professional Experience</h1>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    A journey through my career progression, showcasing diverse experiences in software development, 
+                    Operations Mangement, and community leadership.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="serif text-4xl font-bold mb-4 text-navy">Career Timeline</h2>
+                <p class="text-xl text-gray-600">Click on any position to explore detailed information</p>
+            </div>
+            
+            <div class="timeline">
+
+                <!-- Zaki Technology -->
+                <div class="timeline-item" data-position="zaki">
+                <div class="timeline-content">
+                    <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="serif text-2xl font-bold text-navy">Software Engineer</h3>
+                        <p class="text-lg text-copper font-semibold">Zaki Technology</p>
+                        <p class="text-gray-600">Remote, NC • March 2025 – Present</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="skill-tag">Full-Stack Development</span>
+                    </div>
+                    </div>
+
+                    <p class="text-gray-700 mb-4">
+                    Develop and deliver full-stack applications for clients using Python, React, and JavaScript—translating
+                    business requirements into efficient, user-friendly solutions with clean architecture and maintainable code.
+                    </p>
+
+                    <div class="timeline-details" id="zaki-details">
+                    <div class="border-t border-gray-200 pt-4 mt-4">
+                        <h4 class="font-semibold text-navy mb-3">Key Achievements:</h4>
+
+                        <div class="achievement-item">
+                        <span>Built and deployed containerized services with <strong>Docker</strong> and orchestrated workloads with <strong>Kubernetes</strong> to ensure scalable, reliable releases.</span>
+                        </div>
+                        <div class="achievement-item">
+                        <span>Integrated <strong>Firebase</strong> for auth, cloud storage, and real-time data sync (Firestore/RTDB) across web clients.</span>
+                        </div>
+                        <div class="achievement-item">
+                        <span>Collaborated with clients and cross-functional teams to scope features, troubleshoot issues, and ship enhancements that improved system reliability and UX.</span>
+                        </div>
+                        <div class="achievement-item">
+                        <span>Delivered production-ready full-stack features in Python/React with clear APIs, reusable UI components, and automated checks.</span>
+                        </div>
+
+                        <h4 class="font-semibold text-navy mb-3 mt-6">Technologies Used:</h4>
+                        <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">Firebase Auth</span>
+                        <span class="skill-tag">Firestore / RTDB</span>
+                        <span class="skill-tag">Cloud Storage</span>
+                        <span class="skill-tag">REST APIs</span>
+                        <span class="skill-tag">CI/CD</span>
+                        </div>
+                    </div>
+                    </div>
+
+    <button class="expand-btn text-copper font-semibold hover:underline mt-2">
+      Click to expand details
+    </button>
+  </div>
+</div>
+
+
+                <!-- Ummah Professionals Internship -->
+                <div class="timeline-item" data-position="ummah">
+                    <div class="timeline-content">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="serif text-2xl font-bold text-navy">Application Developer Intern</h3>
+                                <p class="text-lg text-copper font-semibold">Ummah Professionals</p>
+                                <p class="text-gray-600">Remote • June 2025 – August 2025</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="skill-tag">Full-Stack Development</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4">
+                            Engineered a comprehensive full-stack scheduling platform for mentor-student coordination, 
+                            integrating multiple APIs and automated workflows to streamline operations.
+                        </p>
+                        
+                        <div class="timeline-details" id="ummah-details">
+                            <div class="border-t border-gray-200 pt-4 mt-4">
+                                <h4 class="font-semibold text-navy mb-3">Key Achievements:</h4>
+                                <div class="achievement-item">
+                                    <span>Developed React and Flask-based scheduling platform with Google Calendar and Gmail API integration</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Implemented automated workflows using Monday.com GraphQL API and Discord Webhooks</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Delivered scalable internal tool now used by 100+ mentors, eliminating need for multiple external tools</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Streamlined mentorship operations and improved scheduling efficiency across the organization</span>
+                                </div>
+                                
+                                <h4 class="font-semibold text-navy mb-3 mt-6">Technologies Used:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">React</span>
+                                    <span class="skill-tag">Flask</span>
+                                    <span class="skill-tag">Google OAuth</span>
+                                    <span class="skill-tag">MySQL</span>
+                                    <span class="skill-tag">GraphQL</span>
+                                    <span class="skill-tag">Discord API</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn text-copper font-semibold hover:underline mt-2">
+                            Click to expand details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UNC REX Transport Supervisor -->
+                <div class="timeline-item" data-position="unc">
+                    <div class="timeline-content">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="serif text-2xl font-bold text-navy">Transport Floor Supervisor</h3>
+                                <p class="text-lg text-copper font-semibold">UNC REX Healthcare</p>
+                                <p class="text-gray-600">Raleigh, NC • July 2022 – March 2025</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="skill-tag">Operations Management</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4">
+                            Oversee patient transport systems and operational flow, leveraging hospital information systems 
+                            to optimize resource allocation and improve patient care delivery.
+                        </p>
+                        
+                        <div class="timeline-details" id="unc-details">
+                            <div class="border-t border-gray-200 pt-4 mt-4">
+                                <h4 class="font-semibold text-navy mb-3">Key Achievements:</h4>
+                                <div class="achievement-item">
+                                    <span>Reduced patient transport time by ~10% through systematic process optimization</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Coordinated communication among staff and optimized transport schedules</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Pioneered new approaches to transport scheduling using hospital information systems</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Improved resource allocation and patient care delivery efficiency</span>
+                                </div>
+                                
+                                <h4 class="font-semibold text-navy mb-3 mt-6">Skills Developed:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">Process Optimization</span>
+                                    <span class="skill-tag">Data Management</span>
+                                    <span class="skill-tag">Team Coordination</span>
+                                    <span class="skill-tag">Resource Allocation</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn text-copper font-semibold hover:underline mt-2">
+                            Click to expand details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Boulevard -->
+                <div class="timeline-item" data-position="boulevard">
+                    <div class="timeline-content">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="serif text-2xl font-bold text-navy">Tech Manager & Design Specialist</h3>
+                                <p class="text-lg text-copper font-semibold">Custom Boulevard</p>
+                                <p class="text-gray-600">Raleigh, NC • August 2019 – June 2022</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="skill-tag">Technology Management</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4">
+                            Led technology infrastructure development and digital product design, 
+                            managing IT systems while achieving significant revenue growth through technology optimization.
+                        </p>
+                        
+                        <div class="timeline-details" id="boulevard-details">
+                            <div class="border-t border-gray-200 pt-4 mt-4">
+                                <h4 class="font-semibold text-navy mb-3">Key Achievements:</h4>
+                                <div class="achievement-item">
+                                    <span>Designed digital and physical products to meet client needs, enhancing satisfaction and engagement</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Managed and developed IT infrastructure, ensuring reliable performance and connectivity</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Led team scheduling and workflow, achieving measurable productivity gains</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Increased revenue by 22% through technology optimization and improved service delivery</span>
+                                </div>
+                                
+                                <h4 class="font-semibold text-navy mb-3 mt-6">Responsibilities:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">IT Infrastructure</span>
+                                    <span class="skill-tag">Product Design</span>
+                                    <span class="skill-tag">Team Leadership</span>
+                                    <span class="skill-tag">Client Relations</span>
+                                    <span class="skill-tag">Revenue Optimization</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn text-copper font-semibold hover:underline mt-2">
+                            Click to expand details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Outreach Coordinator -->
+                <div class="timeline-item" data-position="outreach">
+                    <div class="timeline-content">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="serif text-2xl font-bold text-navy">Outreach Coordinator</h3>
+                                <p class="text-lg text-copper font-semibold">Computer Science & Robotics</p>
+                                <p class="text-gray-600">Wake County, NC • January 2019 – May 2020</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="skill-tag">Community Leadership</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4">
+                            Organized county-wide initiatives to introduce students to coding, robotics, and computer science, 
+                            coordinating with local schools to host interactive technology workshops.
+                        </p>
+                        
+                        <div class="timeline-details" id="outreach-details">
+                            <div class="border-t border-gray-200 pt-4 mt-4">
+                                <h4 class="font-semibold text-navy mb-3">Key Achievements:</h4>
+                                <div class="achievement-item">
+                                    <span>Organized county-wide technology education initiatives reaching diverse student populations</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Coordinated with local schools to host interactive coding and robotics workshops</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Introduced students of all ages to computer science concepts and programming</span>
+                                </div>
+                                <div class="achievement-item">
+                                    <span>Built partnerships between educational institutions and technology community</span>
+                                </div>
+                                
+                                <h4 class="font-semibold text-navy mb-3 mt-6">Focus Areas:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">STEM Education</span>
+                                    <span class="skill-tag">Community Engagement</span>
+                                    <span class="skill-tag">Event Planning</span>
+                                    <span class="skill-tag">Partnership Building</span>
+                                    <span class="skill-tag">Youth Development</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn text-copper font-semibold hover:underline mt-2">
+                            Click to expand details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Evolution -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="serif text-4xl font-bold mb-4 text-navy">Skills Evolution</h2>
+                <p class="text-xl text-gray-600">How my technical skills have developed over time</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-copper rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-2 text-navy">Programming</h3>
+                    <p class="text-gray-600 text-sm">Java, Python, JavaScript, SQL</p>
+                    <div class="mt-4">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-copper h-2 rounded-full" style="width: 90%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">Advanced Level</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-teal rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-2 text-navy">Frameworks</h3>
+                    <p class="text-gray-600 text-sm">React, Node.js, Spring Boot</p>
+                    <div class="mt-4">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-teal h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">Proficient Level</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-2 text-navy">AI/ML</h3>
+                    <p class="text-gray-600 text-sm">Python, PyTorch, Hugging Face</p>
+                    <div class="mt-4">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-500 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">Intermediate Level</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-2 text-navy">Leadership</h3>
+                    <p class="text-gray-600 text-sm">Team Management, Project Coordination</p>
+                    <div class="mt-4">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">Advanced Level</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 bg-navy text-white">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="serif text-4xl lg:text-5xl font-bold mb-6">Ready for the Next Challenge?</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                I'm seeking opportunities to apply my diverse experience and technical skills 
+                to solve complex problems and drive innovation.
+            </p>
+            <div class="flex flex-row flex-wrap items-center justify-center gap-4">
+            <a href="contact.html"
+                class="inline-flex items-center justify-center  hover:bg-opacity-90 text-white px-8 py-4 rounded-lg font-semibold transition-all transform hover:scale-105">
+                Let's Connect
+            </a>
+            <a href="projects.html"
+                class="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white hover:text-navy px-8 py-4 rounded-lg font-semibold transition-all">
+                View My Projects
+            </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="serif text-2xl font-bold mb-4 text-gradient">Fady Eskandr</div>
+                <p class="text-gray-400 mb-6">Software Engineer | Full-Stack Developer | AI Enthusiast</p>
+                <div class="flex justify-center space-x-6 mb-8">
+                    <a href="https://linkedin.com/in/fady-eskandr" target="_blank" class="text-gray-400 hover:text-copper transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:fadyeskandr100@gmail.com" class="text-gray-400 hover:text-copper transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm">© 2025 Fady Eskandr. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Timeline interaction
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach(item => {
+                const expandBtn = item.querySelector('.expand-btn');
+                const details = item.querySelector('.timeline-details');
+                
+                expandBtn.addEventListener('click', function() {
+                    const isExpanded = details.classList.contains('expanded');
+                    
+                    // Close all other expanded items
+                    timelineItems.forEach(otherItem => {
+                        const otherDetails = otherItem.querySelector('.timeline-details');
+                        const otherBtn = otherItem.querySelector('.expand-btn');
+                        otherDetails.classList.remove('expanded');
+                        otherBtn.textContent = 'Click to expand details';
+                    });
+                    
+                    // Toggle current item
+                    if (isExpanded) {
+                        details.classList.remove('expanded');
+                        expandBtn.textContent = 'Click to expand details';
+                    } else {
+                        details.classList.add('expanded');
+                        expandBtn.textContent = 'Click to collapse details';
+                    }
+                });
+            });
+            
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const nav = document.querySelector('nav');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    let mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu) {
+                        mobileMenu = document.createElement('div');
+                        mobileMenu.id = 'mobile-menu';
+                        mobileMenu.className = 'md:hidden bg-white border-t border-gray-200';
+                        mobileMenu.innerHTML = `
+                            <div class="px-4 py-6 space-y-4">
+                                <a href="index.html" class="block text-gray-700 hover:text-copper transition-colors">Home</a>
+                                <a href="projects.html" class="block text-gray-700 hover:text-copper transition-colors">Projects</a>
+                                <a href="experience.html" class="block text-copper font-semibold">Experience</a>
+                                <a href="contact.html" class="block text-gray-700 hover:text-copper transition-colors">Contact</a>
+                            </div>
+                        `;
+                        nav.appendChild(mobileMenu);
+                    }
+                    
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Animate timeline items on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            opacity: [0, 1],
+                            translateX: [-50, 0],
+                            duration: 800,
+                            easing: 'easeOutCubic'
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe timeline items
+            timelineItems.forEach(item => {
+                item.style.opacity = '0';
+                observer.observe(item);
+            });
+            
+            // Animate skill progress bars
+            const skillBars = document.querySelectorAll('.bg-copper, .bg-teal, .bg-purple-500, .bg-blue-500');
+            
+            const skillObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const bar = entry.target;
+                        const width = bar.style.width;
+                        bar.style.width = '0%';
+                        
+                        anime({
+                            targets: bar,
+                            width: width,
+                            duration: 1500,
+                            easing: 'easeOutCubic',
+                            delay: 200
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            skillBars.forEach(bar => {
+                skillObserver.observe(bar);
+            });
+        });
+    </script>
+</body>
+</html>
